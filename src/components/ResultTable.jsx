@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { BsPencilSquare, BsTrash3Fill } from 'react-icons/bs';
+import Toast from './Toast';
 
 // Component ResultTable - Hiển thị danh sách
 export default function ResultTable({ keyword, user, onAdded }) {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(null);
+  const [toast, setToast] = useState(null);
 
   // Tải dữ liệu từ API một lần khi component mount
   useEffect(() => {
@@ -25,6 +27,7 @@ export default function ResultTable({ keyword, user, onAdded }) {
   useEffect(() => {
     if (user) {
       setUsers((prev) => [...prev, { ...user, id: prev.length + 1 }]);
+      setToast({ message: '✓ Thêm người dùng thành công!', type: 'success' });
       onAdded();
     }
   }, [user, onAdded]);
@@ -40,6 +43,7 @@ export default function ResultTable({ keyword, user, onAdded }) {
   function removeUser(id) {
     if (window.confirm("Bạn có chắc muốn xóa người dùng này?")) {
       setUsers((prev) => prev.filter((u) => u.id !== id));
+      setToast({ message: '✓ Xóa người dùng thành công!', type: 'success' });
     }
   }
 
@@ -64,6 +68,7 @@ export default function ResultTable({ keyword, user, onAdded }) {
       return;
     }
     setUsers(prev => prev.map(u => u.id === editing.id ? editing : u));
+    setToast({ message: '✓ Chỉnh sửa người dùng thành công!', type: 'success' });
     setEditing(null);
   }
 
@@ -73,6 +78,7 @@ export default function ResultTable({ keyword, user, onAdded }) {
 
   return (
     <>
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
       <table>
         <thead>
           <tr>
